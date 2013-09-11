@@ -55,11 +55,11 @@ void InitNodeBuf(Node* nodes, const unsigned char* img, int imgWidth, int imgHei
     for (j = 0; j < imgHeight; j++)
     {
       int p = (*nodes).row;
-      (*nodes).row = j;
-      (*nodes).column = i;
+      *nodes.row = j;
+      *nodes.column = i;
       for (link = 0; link < 8; link++)
       {
-        (*nodes).linkCost[link] = gradients[link][i][j];
+        *nodes.linkCost[link] = gradients[link][i][j];
       }
       nodes++;
     }
