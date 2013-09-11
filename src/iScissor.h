@@ -10,6 +10,8 @@ const int EXPANDED = 2;
 // added by dewey
 const double SQRT2 = 1.4142135623730950488016887242097;
 const double SQINV = 1.0 / SQRT2;
+const int KERNEL_HEIGHT = 3;
+const int KERNEL_WIDTH = 3;
 
 // The eight filter kernels
 ///////////////////////////////////////////////////////////////////////

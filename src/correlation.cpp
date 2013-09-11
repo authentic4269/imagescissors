@@ -35,19 +35,32 @@ void image_filter(double* rsltImg, const unsigned char* origImg, const unsigned 
                   const double* kernel, int knlWidth, int knlHeight,
                   double scale, double offset)
 {
-  for(int i = 0; i < imgHeight; i++)
+
+  for(int i = 0; i < imgWidth; i++)
   {
-    for(int j = 0; j < imgWidth; j++)
+    for(int j = 0; j < imgHeight; j++)
     {
       double res[3];
-      res = pixel_filter(res, i, y, origImg, imgWidth, imgHeight, kernel, knlWidth, knlHeight, scale, offset);
-      for (int o = 0; o < 3; o++)
+      if (selection[(i + j * imgWidth)])
       {
-        rsltImg[i * imgHeight + j + o] = res[0];
+        pixel_filter(res, i, j, origImg, imgWidth, imgHeight, kernel, knlWidth, knlHeight, scale, offset);
+        rsltImg[i + imgWidth * j] = 0;
+        for (int o = 0; o < 3; o++)
+        {
+         rsltImg[(i + imgWidth * j)] += res[o];
+        }
+        rsltImg[i + imgWidth * j] /= 3;
+      }
+      else
+      {
+        for (int o = 0; o < 3; o++)
+        {
+          rsltImg[i + imgWidth * j] += origImg[3*(i + imgWidth * j) + o];
+        }
+        rsltImg[i + imgWidth * j] /= 3;
       }
     }
   }
-  return rsltImg;
 }
 
 /************************ END OF TODO 2 **************************/
@@ -93,8 +106,8 @@ void pixel_filter(double rsltPixel[3], int x, int y, const unsigned char* origIm
       {
         int t = 3*(((y+yoff-1)*imgWidth)+(x+xoff-1))+i;
         if (t < 0 || t > (imgWidth * imgHeight - 1))
-          continue
-        rsltPixel[i] += kernel[(knlHeight*yoff) + xoff] * origImg[3*(((y+yoff-1)*imgWidth)+(x+xoff-1))+i];
+          continue;
+        rsltPixel[i] += kernel[(knlHeight*yoff) + xoff] * origImg[t];
       }
     }
   }
@@ -103,8 +116,6 @@ void pixel_filter(double rsltPixel[3], int x, int y, const unsigned char* origIm
     rsltPixel[i] /= scale;
     rsltPixel[i] += offset;
   }
-  return rsltPixel;
 }
 
 /************************ END OF TODO 3 **************************/
-
