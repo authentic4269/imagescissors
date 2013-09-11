@@ -6,6 +6,7 @@
 
 #include "correlation.h"
 #include "iScissor.h"
+#include "PriorityQueue.h"
 
 const double linkLengths[8] = { 1.0, SQRT2, 1.0, SQRT2, 1.0, SQRT2, 1.0, SQRT2 };
 
@@ -62,7 +63,19 @@ static int offsetToLinkIndex(int dx, int dy)
 
 void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const unsigned char* selection, int numExpanded)
 {
-printf("TODO: %s:%d\n", __FILE__, __LINE__); 
+printf("TODO: %s:%d\n", __FILE__, __LINE__);
+    CTypedPtrHeap<Node> pq;
+    for (int i = 0; i < width * height; i++) {
+        nodes[i].state = INITIAL;
+    }
+    Node seed = *nodes;
+    seed.totalCost = 0.0;
+    while (!pq.IsEmpty()) {
+        Node *q = pq.ExtractMin();
+        Node qNode = *q;
+        qNode.state = EXPANDED;
+    }
+    
 
 }
 /************************ END OF TODO 4 ***************************/
@@ -83,7 +96,9 @@ printf("TODO: %s:%d\n", __FILE__, __LINE__);
 
 void MinimumPath(CTypedPtrDblList <Node>* path, int freePtX, int freePtY, Node* nodes, int width, int height)
 {
-printf("TODO: %s:%d\n", __FILE__, __LINE__); 
+printf("TODO: %s:%d\n", __FILE__, __LINE__);
+
+    
 
 }
 /************************ END OF TODO 5 ***************************/
