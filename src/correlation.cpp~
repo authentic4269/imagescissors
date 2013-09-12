@@ -1,4 +1,7 @@
 #include "correlation.h"
+#include <iostream>
+#include <fstream>
+using namespace std;
 
 /************************ TODO 2 **************************/
 /*
@@ -36,10 +39,18 @@ void image_filter(double* rsltImg, const unsigned char* origImg, const unsigned 
                   double scale, double offset)
 {
 
+  ofstream logfile;
+  logfile.open("scissor_log");
+  logfile << "image filtering";
+  logfile.close();
   for(int i = 0; i < imgWidth; i++)
   {
+    logfile.open("scissor_log");
     for(int j = 0; j < imgHeight; j++)
     {
+      logfile << "filter iteration: ";
+      logfile << i;
+      logfile << j;
       double res[3];
       if (selection[(i + j * imgWidth)])
       {
@@ -97,7 +108,9 @@ void pixel_filter(double rsltPixel[3], int x, int y, const unsigned char* origIm
                   double scale, double offset)
 {
   int xoff, yoff, i;
-
+  ofstream logfile;
+  logfile.open("scissor_log");
+  logfile << "helloworld";
   for (xoff = 0; xoff < knlWidth; xoff++)
   {
     for (yoff = 0; yoff < knlHeight; yoff++)
@@ -105,8 +118,10 @@ void pixel_filter(double rsltPixel[3], int x, int y, const unsigned char* origIm
       for(i = 0; i < 3; i++)
       {
         int t = 3*(((y+yoff-1)*imgWidth)+(x+xoff-1))+i;
+        logfile << "t= ";
+        logfile << t;
         if (t < 0 || t > (imgWidth * imgHeight - 1))
-          continue
+          continue;
         rsltPixel[i] += kernel[(knlHeight*yoff) + xoff] * origImg[t];
       }
     }

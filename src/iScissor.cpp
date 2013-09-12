@@ -3,9 +3,12 @@
  * (see also correlation.cpp and iScissor.h for additional TODOs) */
 
 #include <assert.h>
-
+#include <iostream>
 #include "correlation.h"
 #include "iScissor.h"
+#include <fstream>
+using namespace std;
+
 
 const double linkLengths[8] = { 1.0, SQRT2, 1.0, SQRT2, 1.0, SQRT2, 1.0, SQRT2 };
 
@@ -34,21 +37,19 @@ void InitNodeBuf(Node* nodes, const unsigned char* img, int imgWidth, int imgHei
 {
   int j;
   int link;
-  double gradients[8][imgWidth][imgHeight];
+  double *gradients = new double[8 * imgWidth * imgHeight];
   double hi = 1.0;
-  unsigned char selected[imgWidth][imgHeight * 3];
-  for (int p = 0; p < imgWidth; p++)
+  int sz = imgWidth * imgHeight * 3;
+  unsigned char *selected = new unsigned char[imgWidth * imgHeight * 3];
+  for (int i = 0; i < imgWidth * imgHeight * 3; i++)
   {
-    for (int q = 0; q < imgHeight; q++)
-    {
-      selected[p][q] = 1.0;
-    }
+    selected[i] = 1;
   }
   for (int i = 0; i < 8; i++)
   {
-    double *ptr = gradients[i][0];
-    const unsigned char *sel = selected[0];
-    image_filter(ptr, img, sel, imgWidth, imgHeight, kernels[i], KERNEL_WIDTH, KERNEL_HEIGHT, 1.0, 0);
+    double *ptr = &gradients[i * imgWidth * imgHeight];
+    const unsigned char *sel = selected;
+    image_filter(ptr, img, sel, imgWidth, imgHeight, kernels[i], KERNEL_WIDTH, KERNEL_HEIGHT, 0.0, 1.0);
   }
   for (int i = 0; i < imgWidth; i++)
   {
@@ -59,7 +60,7 @@ void InitNodeBuf(Node* nodes, const unsigned char* img, int imgWidth, int imgHei
       (*nodes).column = i;
       for (link = 0; link < 8; link++)
       {
-        (*nodes).linkCost[link] = gradients[link][i][j];
+        (*nodes).linkCost[link] = gradients[link * imgWidth * imgHeight + i * imgHeight + j];
       }
       nodes++;
     }
