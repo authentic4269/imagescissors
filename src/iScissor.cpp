@@ -95,21 +95,38 @@ static int offsetToLinkIndex(int dx, int dy)
 void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const unsigned char* selection, int numExpanded)
 {
 printf("TODO: %s:%d\n", __FILE__, __LINE__);
-<<<<<<< HEAD
     CTypedPtrHeap<Node> pq;
     for (int i = 0; i < width * height; i++) {
         nodes[i].state = INITIAL;
     }
-    Node seed = *nodes;
-    seed.totalCost = 0.0;
+    Node *seedPtr = &(nodes[0]);
+    (*seedPtr).totalCost = 0.0;
+    pq.Insert(seedPtr);
     while (!pq.IsEmpty()) {
-        Node *q = pq.ExtractMin();
-        Node qNode = *q;
-        qNode.state = EXPANDED;
+        Node *qPtr = pq.ExtractMin();
+        (*qPtr).state = EXPANDED;
+        for (int i = 0; i < 8; i++) {
+            int offsetX, offsetY;
+            (*qPtr).nbrNodeOffset(offsetX, offsetY, i);
+            int rX = (*qPtr).column + offsetX;
+            int rY = (*qPtr).row + offsetY;
+            Node *rPtr = &(nodes[width * rY + rX]);
+            if (! ((*rPtr).state == EXPANDED)) {
+                if ((*rPtr).state == INITIAL) {
+                    (*rPtr).totalCost = (*qPtr).totalCost + (*qPtr).linkCost[i];
+                    (*rPtr).state = ACTIVE;
+                    pq.Insert(rPtr);
+                }
+                else {
+                    int sumCost = (*qPtr).totalCost + (*qPtr).linkCost[i];
+                    if (sumCost < (*rPtr).totalCost) {
+                        (*rPtr).totalCost = sumCost;
+                    }
+                }
+            }
+            
+        }
     }
-    
-=======
->>>>>>> 8aa8218eec46fb355beebeda900a69794f96eae0
 
 }
 /************************ END OF TODO 4 ***************************/
@@ -131,11 +148,6 @@ printf("TODO: %s:%d\n", __FILE__, __LINE__);
 void MinimumPath(CTypedPtrDblList <Node>* path, int freePtX, int freePtY, Node* nodes, int width, int height)
 {
 printf("TODO: %s:%d\n", __FILE__, __LINE__);
-<<<<<<< HEAD
-
-    
-=======
->>>>>>> 8aa8218eec46fb355beebeda900a69794f96eae0
 
 }
 /************************ END OF TODO 5 ***************************/
