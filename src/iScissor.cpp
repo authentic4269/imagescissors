@@ -119,23 +119,26 @@ printf("TODO: %s:%d\n", __FILE__, __LINE__);
             (*qPtr).nbrNodeOffset(offsetX, offsetY, i);
             int rX = (*qPtr).column + offsetX;
             int rY = (*qPtr).row + offsetY;
-            Node *rPtr = &(nodes[width * rY + rX]);
-            if (! ((*rPtr).state == EXPANDED)) {
-                if ((*rPtr).state == INITIAL) {
-                    (*rPtr).totalCost = (*qPtr).totalCost + (*qPtr).linkCost[i];
-                    (*rPtr).state = ACTIVE;
-                    (*rPtr).prevNode = qPtr;
-                    pq.Insert(rPtr);
-                }
-                else {
-                    int sumCost = (*qPtr).totalCost + (*qPtr).linkCost[i];
-                    if (sumCost < (*rPtr).totalCost) {
-                        (*rPtr).totalCost = sumCost;
-                        (*rPtr).prevNode = qPtr;
+            if (rX < width && rX >= 0 && rY < height && rY >= 0) {
+                if (!selection || selection[width * rY + rX]) {
+                    Node *rPtr = &(nodes[width * rY + rX]);
+                    if (! ((*rPtr).state == EXPANDED)) {
+                        if ((*rPtr).state == INITIAL) {
+                            (*rPtr).totalCost = (*qPtr).totalCost + (*qPtr).linkCost[i];
+                            (*rPtr).state = ACTIVE;
+                            (*rPtr).prevNode = qPtr;
+                            pq.Insert(rPtr);
+                        }
+                        else {
+                            int sumCost = (*qPtr).totalCost + (*qPtr).linkCost[i];
+                            if (sumCost < (*rPtr).totalCost) {
+                                (*rPtr).totalCost = sumCost;
+                                (*rPtr).prevNode = qPtr;
+                            }
+                        }
                     }
                 }
             }
-
         }
     }
 
@@ -161,8 +164,11 @@ void MinimumPath(CTypedPtrDblList <Node>* path, int freePtX, int freePtY, Node* 
 printf("TODO: %s:%d\n", __FILE__, __LINE__);
     Node *n = &(nodes[freePtY * width + freePtX]);
     while (n != NULL) {
-      //  n = &(path.AddHead(n));
-        
+        CTypedPtrDblElement<Node>* elem;
+        Node *data;
+        elem = (*path).AddHead(n);
+        data = (*elem).Data();
+        n = (*data).prevNode;
     }
 
 	// Extra credit
