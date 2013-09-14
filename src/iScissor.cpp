@@ -3,9 +3,11 @@
  * (see also correlation.cpp and iScissor.h for additional TODOs) */
 
 #include <assert.h>
-
+#include <iostream>
 #include "correlation.h"
 #include "iScissor.h"
+#include <fstream>
+using namespace std;
 #include "PriorityQueue.h"
 
 const double linkLengths[8] = { 1.0, SQRT2, 1.0, SQRT2, 1.0, SQRT2, 1.0, SQRT2 };
@@ -35,21 +37,20 @@ void InitNodeBuf(Node* nodes, const unsigned char* img, int imgWidth, int imgHei
 {
   int j;
   int link;
-  double gradients[8][imgWidth][imgHeight];
+  double *gradients = new double[8 * imgWidth * imgHeight];
   double hi = 1.0;
-  unsigned char selected[imgWidth][imgHeight * 3];
-  for (int p = 0; p < imgWidth; p++)
+  int sz = imgWidth * imgHeight * 3;
+  unsigned char *selected = new unsigned char[imgWidth * imgHeight * 3];
+  for (int i = 0; i < imgWidth * imgHeight * 3; i++)
   {
-    for (int q = 0; q < imgHeight; q++)
-    {
-      selected[p][q] = 1.0;
-    }
+    selected[i] = 1;
   }
   for (int i = 0; i < 8; i++)
   {
-    double *ptr = gradients[i][0];
-    const unsigned char *sel = selected[0];
-    image_filter(ptr, img, sel, imgWidth, imgHeight, kernels[i], KERNEL_WIDTH, KERNEL_HEIGHT, 1.0, 0);
+    double *ptr = &gradients[i * imgWidth * imgHeight];
+    const unsigned char *sel = selected;
+    double ke[9] = {0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0};
+    image_filter(ptr, img, sel, imgWidth, imgHeight, kernels[i], KERNEL_WIDTH, KERNEL_HEIGHT, 1.0, 0.0);
   }
   for (int i = 0; i < imgWidth; i++)
   {
@@ -60,7 +61,8 @@ void InitNodeBuf(Node* nodes, const unsigned char* img, int imgWidth, int imgHei
       (*nodes).column = i;
       for (link = 0; link < 8; link++)
       {
-        (*nodes).linkCost[link] = gradients[link][i][j];
+        (*nodes).linkCost[link] = gradients[link * imgWidth * imgHeight + i * imgHeight + j];
+        cout << "\nX: "; cout << i; cout << ", Y: "; cout << j; cout << "\nLink: "; cout << link; cout << ", Cost: "; cout << gradients[link * imgWidth * imgHeight + i * imgHeight + j];
       }
       nodes++;
     }
@@ -73,7 +75,7 @@ static int offsetToLinkIndex(int dx, int dy)
 {
     int indices[9] = { 3, 2, 1, 4, -1, 0, 5, 6, 7 };
     int tmp_idx = (dy + 1) * 3 + (dx + 1);
-    assert(tmp_idx >= 0 && tmp_idx < 9 && tmp_idx != 4);
+    //assert(tmp_idx >= 0 && tmp_idx < 9 && tmp_idx != 4);
     return indices[tmp_idx];
 }
 
@@ -96,12 +98,12 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
 {
 printf("TODO: %s:%d\n", __FILE__, __LINE__);
     int currentExpanded = 0;
+    CTypedPtrHeap<Node> pq;
     for (int i = 0; i < width * height; i++) {
         nodes[i].state = INITIAL;
         nodes[i].totalCost = 0;
         nodes[i].prevNode = NULL;
     }
-    CTypedPtrHeap<Node> pq;
     Node *seedPtr = &(nodes[width * seedY + seedX]);
     (*seedPtr).totalCost = 0.0;
     pq.Insert(seedPtr);
@@ -133,7 +135,7 @@ printf("TODO: %s:%d\n", __FILE__, __LINE__);
                     }
                 }
             }
-            
+
         }
     }
 
@@ -163,6 +165,7 @@ printf("TODO: %s:%d\n", __FILE__, __LINE__);
         
     }
 
+	// Extra credit
 }
 /************************ END OF TODO 5 ***************************/
 
@@ -178,7 +181,7 @@ printf("TODO: %s:%d\n", __FILE__, __LINE__);
 
 void SeedSnap(int& x, int& y, unsigned char* img, int width, int height)
 {
-    printf("SeedSnap in iScissor.cpp: to be implemented for extra credit!\n");
+	//Extra credit
 }
 
 //generate a cost graph from original image and node buffer with all the link costs;
