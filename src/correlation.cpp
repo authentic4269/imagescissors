@@ -33,40 +33,39 @@ using namespace std;
  *						it is a valid pointer ( allocated already ).
  */
 
- void image_filter(double* rsltImg, const unsigned char* origImg, const unsigned char* selection,
-     int imgWidth, int imgHeight,
-     const double* kernel, int knlWidth, int knlHeight,
-     double scale, double offset)
- {
-   for(int i = 0; i < imgWidth; i++)
-   {
-     for(int j = 0; j < imgHeight; j++)
-     {
-       double res[3] = {0.0, 0.0, 0.0};
-       if (selection[(j + i * imgWidth)])
-       {
-    	 pixel_filter(res, i, j, origImg, imgWidth, imgHeight, kernel, knlWidth, knlHeight, scale, offset);
-         cout << '\n';
-         cout << "Pixel filter: x="; cout << i; cout << ", y="; cout << j;
-         rsltImg[i * imgWidth + j] = 0;
-         for (int o = 0; o < 3; o++)
-         {
-           rsltImg[(i * imgWidth + j)] += res[o];
-         }
-         rsltImg[i * imgWidth + j] /= 3;
-         cout << "Filtered pixel: "; cout << rsltImg[i * imgWidth + j];
-       }
-       else
-       {
-         for (int o = 0; o < 3; o++)
-         {
-           rsltImg[i * imgWidth + j] += origImg[3*(i * imgWidth + j) + o];
-         }
-         rsltImg[i * imgWidth + j] /= 3;
-       }
-     }
-   }
- }
+void image_filter(double* rsltImg, const unsigned char* origImg, const unsigned char* selection,
+    int imgWidth, int imgHeight,
+    const double* kernel, int knlWidth, int knlHeight,
+    double scale, double offset)
+{
+  int i = 0;
+  int j = 0;
+  for(i = 0; i < imgHeight; i++)
+  {
+    for(j = 0; j < imgWidth; j++)
+    {
+      double res[3] = {0.0, 0.0, 0.0};
+      if (selection[(j + i * imgWidth)])
+      {
+        pixel_filter(res, i, j, origImg, imgWidth, imgHeight, kernel, knlWidth, knlHeight, scale, offset);
+        rsltImg[i * imgWidth + j] = 0;
+        for (int o = 0; o < 3; o++)
+        {
+          rsltImg[(i * imgWidth + j)] += res[o];
+        }
+        rsltImg[i * imgWidth + j] /= 3;
+      }
+      else
+      {
+        for (int o = 0; o < 3; o++)
+        {
+          rsltImg[i * imgWidth + j] += origImg[3*(i * imgWidth + j) + o];
+        }
+        rsltImg[i * imgWidth + j] /= 3;
+      }
+    }
+  }
+}
 
 /************************ END OF TODO 2 **************************/
 
@@ -98,8 +97,8 @@ using namespace std;
  */
 
 void pixel_filter(double rsltPixel[3], int x, int y, const unsigned char* origImg, int imgWidth, int imgHeight,
-                  const double* kernel, int knlWidth, int knlHeight,
-                  double scale, double offset)
+    const double* kernel, int knlWidth, int knlHeight,
+    double scale, double offset)
 {
   int xoff, yoff, i;
   for (xoff = 0; xoff < knlHeight; xoff++)
@@ -108,12 +107,11 @@ void pixel_filter(double rsltPixel[3], int x, int y, const unsigned char* origIm
     {
       for(int z = 0; z < 3; z++)
       {
-    	  	 cout << z;
-    	  	int t = ((x + xoff - 1) * imgWidth + (y + yoff - 1));
-    	  	if (t > 0 && t < (imgWidth * imgHeight * 3))
-    	  	{
-    	  		rsltPixel[z] += kernel[(knlHeight*xoff) + yoff] * origImg[t];
-    	  	}
+        int t = ((x + xoff - 1) * imgWidth + (y + yoff - 1));
+        if (t >= 0 && t < (imgWidth * imgHeight * 3 - 2))
+        {
+          rsltPixel[z] += kernel[(knlHeight*xoff) + yoff] * origImg[t + z];
+        }
       }
     }
   }
@@ -126,6 +124,6 @@ void pixel_filter(double rsltPixel[3], int x, int y, const unsigned char* origIm
 
 
 
-		}
+
 
 /************************ END OF TODO 3 **************************/

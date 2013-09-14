@@ -8,7 +8,7 @@
 #include "iScissor.h"
 #include <fstream>
 using namespace std;
-
+#include "PriorityQueue.h"
 
 const double linkLengths[8] = { 1.0, SQRT2, 1.0, SQRT2, 1.0, SQRT2, 1.0, SQRT2 };
 
@@ -49,7 +49,8 @@ void InitNodeBuf(Node* nodes, const unsigned char* img, int imgWidth, int imgHei
   {
     double *ptr = &gradients[i * imgWidth * imgHeight];
     const unsigned char *sel = selected;
-    image_filter(ptr, img, sel, imgWidth, imgHeight, kernels[i], KERNEL_WIDTH, KERNEL_HEIGHT, 0.0, 1.0);
+    double ke[9] = {0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0};
+    image_filter(ptr, img, sel, imgWidth, imgHeight, kernels[i], KERNEL_WIDTH, KERNEL_HEIGHT, 1.0, 0.0);
   }
   for (int i = 0; i < imgWidth; i++)
   {
@@ -61,6 +62,7 @@ void InitNodeBuf(Node* nodes, const unsigned char* img, int imgWidth, int imgHei
       for (link = 0; link < 8; link++)
       {
         (*nodes).linkCost[link] = gradients[link * imgWidth * imgHeight + i * imgHeight + j];
+        cout << "\nX: "; cout << i; cout << ", Y: "; cout << j; cout << "\nLink: "; cout << link; cout << ", Cost: "; cout << gradients[link * imgWidth * imgHeight + i * imgHeight + j];
       }
       nodes++;
     }
@@ -73,7 +75,7 @@ static int offsetToLinkIndex(int dx, int dy)
 {
     int indices[9] = { 3, 2, 1, 4, -1, 0, 5, 6, 7 };
     int tmp_idx = (dy + 1) * 3 + (dx + 1);
-    assert(tmp_idx >= 0 && tmp_idx < 9 && tmp_idx != 4);
+    //assert(tmp_idx >= 0 && tmp_idx < 9 && tmp_idx != 4);
     return indices[tmp_idx];
 }
 
@@ -94,7 +96,38 @@ static int offsetToLinkIndex(int dx, int dy)
 
 void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const unsigned char* selection, int numExpanded)
 {
-printf("TODO: %s:%d\n", __FILE__, __LINE__);
+    CTypedPtrHeap<Node> pq;
+    for (int i = 0; i < width * height; i++) {
+        nodes[i].state = INITIAL;
+    }
+    Node *seedPtr = &(nodes[0]);
+    (*seedPtr).totalCost = 0.0;
+    pq.Insert(seedPtr);
+    while (!pq.IsEmpty()) {
+        Node *qPtr = pq.ExtractMin();
+        (*qPtr).state = EXPANDED;
+        for (int i = 0; i < 8; i++) {
+            int offsetX, offsetY;
+            (*qPtr).nbrNodeOffset(offsetX, offsetY, i);
+            int rX = (*qPtr).column + offsetX;
+            int rY = (*qPtr).row + offsetY;
+            Node *rPtr = &(nodes[width * rY + rX]);
+            if (! ((*rPtr).state == EXPANDED)) {
+                if ((*rPtr).state == INITIAL) {
+                    (*rPtr).totalCost = (*qPtr).totalCost + (*qPtr).linkCost[i];
+                    (*rPtr).state = ACTIVE;
+                    pq.Insert(rPtr);
+                }
+                else {
+                    int sumCost = (*qPtr).totalCost + (*qPtr).linkCost[i];
+                    if (sumCost < (*rPtr).totalCost) {
+                        (*rPtr).totalCost = sumCost;
+                    }
+                }
+            }
+
+        }
+    }
 
 }
 /************************ END OF TODO 4 ***************************/
@@ -115,8 +148,7 @@ printf("TODO: %s:%d\n", __FILE__, __LINE__);
 
 void MinimumPath(CTypedPtrDblList <Node>* path, int freePtX, int freePtY, Node* nodes, int width, int height)
 {
-printf("TODO: %s:%d\n", __FILE__, __LINE__);
-
+	// Extra credit
 }
 /************************ END OF TODO 5 ***************************/
 
@@ -132,7 +164,7 @@ printf("TODO: %s:%d\n", __FILE__, __LINE__);
 
 void SeedSnap(int& x, int& y, unsigned char* img, int width, int height)
 {
-    printf("SeedSnap in iScissor.cpp: to be implemented for extra credit!\n");
+	//Extra credit
 }
 
 //generate a cost graph from original image and node buffer with all the link costs;

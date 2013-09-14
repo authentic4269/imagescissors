@@ -2,6 +2,7 @@
 
 int main(int argc, char** argv)
 {
+
     Fl::visual(FL_DOUBLE | FL_RGB);
 
     ImgFilterUI imgFltUI;
