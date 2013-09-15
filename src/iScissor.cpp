@@ -58,8 +58,9 @@ void InitNodeBuf(Node* nodes, const unsigned char* img, int imgWidth, int imgHei
   {
     for (j = 0; j < imgHeight; j++)
     {
-      (*nodes).row = j;
-      (*nodes).column = i;
+      (*nodes).row = i;
+      (*nodes).column = j;
+      cout << "\nRow: "; cout << j; cout << ", Column: "; cout << i; cout << ", Index: "; cout << (i * imgHeight + j);
       for (link = 0; link < 8; link++)
       {
         (*nodes).linkCost[link] = gradients[link * imgWidth * imgHeight + i * imgHeight + j];
@@ -137,11 +138,11 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
             if (rX < width && rX >= 0 && rY < height && rY >= 0) {
                 if (!selection || selection[width * rY + rX]) {
                     Node *rPtr = &(nodes[width * rY + rX]);
+                    cout << "\nrPtr index in nodes: "; cout << (width * rY + rX); cout << ", rY: "; cout << rY; cout << ", rX: "; cout << rX;
                     if (! ((*rPtr).state == EXPANDED)) {
                         if ((*rPtr).state == INITIAL) {
                             (*rPtr).totalCost = (*qPtr).totalCost + (*qPtr).linkCost[i];
                             (*rPtr).state = ACTIVE;
-                            cout << "\nprevNode of node at ("; cout << rPtr->row; cout << ", "; cout << rPtr->column; cout << ") set to node at ("; cout << qPtr->row; cout << ", "; cout << qPtr->column; cout << ")";
                             (*rPtr).prevNode = qPtr;
                             pq.Insert(rPtr);
                         }
