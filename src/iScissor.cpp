@@ -96,7 +96,6 @@ static int offsetToLinkIndex(int dx, int dy)
 
 void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const unsigned char* selection, int numExpanded)
 {
-printf("TODO: %s:%d\n", __FILE__, __LINE__);
     int currentExpanded = 0;
     CTypedPtrHeap<Node> pq;
     for (int i = 0; i < width * height; i++) {
@@ -129,7 +128,7 @@ printf("TODO: %s:%d\n", __FILE__, __LINE__);
                             (*rPtr).prevNode = qPtr;
                             pq.Insert(rPtr);
                         }
-                        else {
+                        else if ((*rPtr).state == ACTIVE) {
                             int sumCost = (*qPtr).totalCost + (*qPtr).linkCost[i];
                             if (sumCost < (*rPtr).totalCost) {
                                 (*rPtr).totalCost = sumCost;
@@ -161,7 +160,6 @@ printf("TODO: %s:%d\n", __FILE__, __LINE__);
 
 void MinimumPath(CTypedPtrDblList <Node>* path, int freePtX, int freePtY, Node* nodes, int width, int height)
 {
-printf("TODO: %s:%d\n", __FILE__, __LINE__);
     Node *n = &(nodes[freePtY * width + freePtX]);
     while (n != NULL) {
         CTypedPtrDblElement<Node>* elem;
