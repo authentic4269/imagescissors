@@ -38,6 +38,7 @@ void InitNodeBuf(Node* nodes, const unsigned char* img, int imgWidth, int imgHei
   int j;
   int link;
   Node* firstnode = nodes;
+  Node* cur;
   double *gradients = new double[8 * imgWidth * imgHeight];
   double maxlink = 0.0;
   double hi = 1.0;
@@ -58,16 +59,16 @@ void InitNodeBuf(Node* nodes, const unsigned char* img, int imgWidth, int imgHei
   {
     for (j = 0; j < imgHeight; j++)
     {
-      (*nodes).row = i;
-      (*nodes).column = j;
+      cur = &(nodes[i * imgHeight + j]);
+      (*cur).row = j;
+      (*cur).column = i;
       cout << "\nRow: "; cout << j; cout << ", Column: "; cout << i; cout << ", Index: "; cout << (i * imgHeight + j);
       for (link = 0; link < 8; link++)
       {
-        (*nodes).linkCost[link] = gradients[link * imgWidth * imgHeight + i * imgHeight + j];
-        if (nodes->linkCost[link] > maxlink)
+        cur->linkCost[link] = gradients[link * imgWidth * imgHeight + i * imgHeight + j];
+        if (cur->linkCost[link] > maxlink)
           maxlink = nodes->linkCost[link];
       }
-      nodes++;
     }
   }
   for (int i = 0; i < 8; i++)
@@ -196,6 +197,7 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
                     Node *rPtr = &(nodes[width * rY + rX]);
                     printf("r column: %d   rX: %d   r row: %d   rY: %d\n", rPtr->column, rX, rPtr->row, rY);
                     cout << "\nrPtr index in nodes: "; cout << (width * rY + rX); cout << ", rY: "; cout << rY; cout << ", rX: "; cout << rX;
+                    cout << "\nrPtr index in nodes: "; cout << (width * rY + rX); cout << ", rY: "; cout << (*rPtr).row; cout << ", rX: "; cout << (*rPtr).column;
                     if (! ((*rPtr).state == EXPANDED)) {
                         if ((*rPtr).state == INITIAL) {
                             (*rPtr).totalCost = (*qPtr).totalCost + (*qPtr).linkCost[i];
