@@ -69,42 +69,6 @@ void InitNodeBuf(Node* nodes, const unsigned char* img, int imgWidth, int imgHei
   }
 }
 
-//void InitNodeBuf(Node *nodes, const unsigned char *img,
-//                 int imgWidth, int imgHeight) {
-//    double *rsltImg;
-//    double maxLink = 0;
-//    
-//    for (int link = 0; link < 8; link++) {
-//        rsltImg = new double[imgWidth * imgHeight * 3];
-//        image_filter(rsltImg, img, NULL, imgWidth, imgHeight,
-//                     kernels[link], 3, 3, 1, 0);
-//        for (int col = 0; col < imgWidth; col++) {
-//            for (int row = 0; row < imgHeight; row++) {
-//                Node* n = &nodes[row*imgWidth + col];
-//                n->row = row;
-//                n->column = col;
-//                double sum = 0;
-//                for (int c = 0; c < 3; c++) {
-//                    double curr = rsltImg[3*(row*imgWidth + col) + c];
-//                    if (curr > maxLink) {
-//                        maxLink = curr;
-//                    }
-//                    sum += curr*curr;
-//                }
-//                n->linkCost[link] = sqrt(sum/3);
-//            }
-//        }
-//        for (int i = 0; i < imgWidth*imgHeight; i++) {
-//            nodes[i].linkCost[link] = maxLink - nodes[i].linkCost[link];
-//            // Odd numbered links are diagonal.
-//            if (link % 2) {
-//                nodes[i].linkCost[link] *= SQRT2;
-//            }
-//        }
-//    }
-//    delete [] rsltImg;
-//}
-
 
 /************************ END OF TODO 1 ***************************/
 
