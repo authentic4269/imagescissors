@@ -37,6 +37,7 @@ void InitNodeBuf(Node* nodes, const unsigned char* img, int imgWidth, int imgHei
 {
   int j;
   int link;
+  Node* firstnode = nodes;
   double *gradients = new double[8 * imgWidth * imgHeight];
   double maxlink = 0.0;
   double hi = 1.0;
@@ -70,11 +71,14 @@ void InitNodeBuf(Node* nodes, const unsigned char* img, int imgWidth, int imgHei
   }
   for (int i = 0; i < 8; i++)
   {
+    nodes = firstnode;
     for (j = 0; j < imgWidth * imgHeight; j++)
     {
-      nodes[j].linkCost[i] = maxlink - nodes[j].linkCost[i];
+      nodes->linkCost[i] = maxlink - nodes->linkCost[i];
+      nodes++;
     }
   }
+  nodes = firstnode;
 }
 
 
