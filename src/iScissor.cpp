@@ -68,6 +68,8 @@ void InitNodeBuf(Node* nodes, const unsigned char* img, int imgWidth, int imgHei
     nodes++;
   }
 }
+
+
 /************************ END OF TODO 1 ***************************/
 
 static int offsetToLinkIndex(int dx, int dy)
@@ -109,12 +111,12 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
     while (!pq.IsEmpty()) {
         Node *qPtr = pq.ExtractMin();
         (*qPtr).state = EXPANDED;
-        printf("Expanded node at position (%d, %d) \n", (*qPtr).column, (*qPtr).row);
+        //printf("Expanded node at position (%d, %d) \n", (*qPtr).column, (*qPtr).row);
    //     printf("The x value of added node: %d The y value of added node: %d", (*qPtr).column, (*qPtr).row );
         currentExpanded++;
-//        if (currentExpanded > numExpanded) {
-//            break;
-//        }
+        if (currentExpanded > numExpanded) {
+            break;
+        }
         for (int i = 0; i < 8; i++) {
             int offsetX, offsetY;
             (*qPtr).nbrNodeOffset(offsetX, offsetY, i);
@@ -131,7 +133,7 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
                             pq.Insert(rPtr);
                         }
                         else if ((*rPtr).state == ACTIVE) {
-                            int sumCost = (*qPtr).totalCost + (*qPtr).linkCost[i];
+                            double sumCost = (*qPtr).totalCost + (*qPtr).linkCost[i];
                             if (sumCost < (*rPtr).totalCost) {
                                 (*rPtr).totalCost = sumCost;
                                 (*rPtr).prevNode = qPtr;
@@ -144,6 +146,8 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
     }
 
 }
+
+
 /************************ END OF TODO 4 ***************************/
 
 /************************ TODO 5 ***************************
@@ -160,6 +164,7 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
  *		after the procedure, the seed should be the head of path and the input code should be the tail
  */
 
+
 void MinimumPath(CTypedPtrDblList <Node>* path, int freePtX, int freePtY, Node* nodes, int width, int height)
 {
     Node *n = &(nodes[freePtY * width + freePtX]);
@@ -169,6 +174,9 @@ void MinimumPath(CTypedPtrDblList <Node>* path, int freePtX, int freePtY, Node* 
         elem = (*path).AddHead(n);
         data = (*elem).Data();
         n = (*data).prevNode;
+        if (n != NULL) {
+            printf("adding node at position (%d,%d) \n", n->column, n->row);
+        }
     }
 
 	// Extra credit
