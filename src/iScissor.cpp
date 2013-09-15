@@ -62,7 +62,6 @@ void InitNodeBuf(Node* nodes, const unsigned char* img, int imgWidth, int imgHei
       for (link = 0; link < 8; link++)
       {
         (*nodes).linkCost[link] = gradients[link * imgWidth * imgHeight + i * imgHeight + j];
-          cout << "\nX: "; cout << j; cout << ", Y: "; cout << i; cout << "\nLink: "; cout << link; cout << ", Cost: "; cout << gradients[link * imgWidth * imgHeight + i * imgHeight + j];
       }
       nodes++;
     }
