@@ -38,6 +38,7 @@ void InitNodeBuf(Node* nodes, const unsigned char* img, int imgWidth, int imgHei
   int j;
   int link;
   double *gradients = new double[8 * imgWidth * imgHeight];
+  double maxlink = 0.0;
   double hi = 1.0;
   int sz = imgWidth * imgHeight * 3;
   unsigned char *selected = new unsigned char[imgWidth * imgHeight * 3];
@@ -56,19 +57,27 @@ void InitNodeBuf(Node* nodes, const unsigned char* img, int imgWidth, int imgHei
   {
     for (j = 0; j < imgHeight; j++)
     {
-      int p = (*nodes).row;
       (*nodes).row = j;
       (*nodes).column = i;
       for (link = 0; link < 8; link++)
       {
         (*nodes).linkCost[link] = gradients[link * imgWidth * imgHeight + i * imgHeight + j];
-          cout << "\nX: "; cout << j; cout << ", Y: "; cout << i; cout << "\nLink: "; cout << link; cout << ", Cost: "; cout << gradients[link * imgWidth * imgHeight + i * imgHeight + j];
+        if (nodes->linkCost[link] > maxlink)
+          maxlink = nodes->linkCost[link];
       }
       nodes++;
     }
-    nodes++;
+  }
+  for (int i = 0; i < 8; i++)
+  {
+    for (j = 0; j < imgWidth * imgHeight; j++)
+    {
+      nodes[j].linkCost[i] = maxlink - nodes[j].linkCost[i];
+    }
   }
 }
+
+
 /************************ END OF TODO 1 ***************************/
 
 static int offsetToLinkIndex(int dx, int dy)
@@ -96,7 +105,6 @@ static int offsetToLinkIndex(int dx, int dy)
 
 void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const unsigned char* selection, int numExpanded)
 {
-printf("TODO: %s:%d\n", __FILE__, __LINE__);
     int currentExpanded = 0;
     CTypedPtrHeap<Node> pq;
     for (int i = 0; i < width * height; i++) {
@@ -107,9 +115,12 @@ printf("TODO: %s:%d\n", __FILE__, __LINE__);
     Node *seedPtr = &(nodes[width * seedY + seedX]);
     (*seedPtr).totalCost = 0.0;
     pq.Insert(seedPtr);
+    //printf("The x value of seed: %d The y value of seed: %d", (*seedPtr).column, (*seedPtr).row );
     while (!pq.IsEmpty()) {
         Node *qPtr = pq.ExtractMin();
         (*qPtr).state = EXPANDED;
+        //printf("Expanded node at position (%d, %d) \n", (*qPtr).column, (*qPtr).row);
+   //     printf("The x value of added node: %d The y value of added node: %d", (*qPtr).column, (*qPtr).row );
         currentExpanded++;
         if (currentExpanded > numExpanded) {
             break;
@@ -126,11 +137,12 @@ printf("TODO: %s:%d\n", __FILE__, __LINE__);
                         if ((*rPtr).state == INITIAL) {
                             (*rPtr).totalCost = (*qPtr).totalCost + (*qPtr).linkCost[i];
                             (*rPtr).state = ACTIVE;
+                            cout << "\nprevNode of node at ("; cout << rPtr->row; cout << ", "; cout << rPtr->column; cout << ") set to node at ("; cout << qPtr->row; cout << ", "; cout << qPtr->column; cout << ")";
                             (*rPtr).prevNode = qPtr;
                             pq.Insert(rPtr);
                         }
-                        else {
-                            int sumCost = (*qPtr).totalCost + (*qPtr).linkCost[i];
+                        else if ((*rPtr).state == ACTIVE) {
+                            double sumCost = (*qPtr).totalCost + (*qPtr).linkCost[i];
                             if (sumCost < (*rPtr).totalCost) {
                                 (*rPtr).totalCost = sumCost;
                                 (*rPtr).prevNode = qPtr;
@@ -141,8 +153,9 @@ printf("TODO: %s:%d\n", __FILE__, __LINE__);
             }
         }
     }
-
 }
+
+
 /************************ END OF TODO 4 ***************************/
 
 /************************ TODO 5 ***************************
@@ -159,9 +172,9 @@ printf("TODO: %s:%d\n", __FILE__, __LINE__);
  *		after the procedure, the seed should be the head of path and the input code should be the tail
  */
 
+
 void MinimumPath(CTypedPtrDblList <Node>* path, int freePtX, int freePtY, Node* nodes, int width, int height)
 {
-printf("TODO: %s:%d\n", __FILE__, __LINE__);
     Node *n = &(nodes[freePtY * width + freePtX]);
     while (n != NULL) {
         CTypedPtrDblElement<Node>* elem;
@@ -169,6 +182,9 @@ printf("TODO: %s:%d\n", __FILE__, __LINE__);
         elem = (*path).AddHead(n);
         data = (*elem).Data();
         n = (*data).prevNode;
+        if (n != NULL) {
+            printf("adding node at position (%d,%d) \n", n->column, n->row);
+        }
     }
 
 	// Extra credit

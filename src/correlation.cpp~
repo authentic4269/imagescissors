@@ -45,18 +45,19 @@ void image_filter(double* rsltImg, const unsigned char* origImg, const unsigned 
     for(j = 0; j < imgWidth; j++)
     {
       double res[3] = {0.0, 0.0, 0.0};
-      if (selection[(j + i * imgWidth)])
+      if (!selection || selection[(j + i * imgWidth)])
       {
         pixel_filter(res, i, j, origImg, imgWidth, imgHeight, kernel, knlWidth, knlHeight, scale, offset);
         rsltImg[i * imgWidth + j] = 0;
         for (int o = 0; o < 3; o++)
         {
+          if (res[0] < 0)
+            res[0] *= -1.0;
           rsltImg[(i * imgWidth + j)] += res[o];
         }
         rsltImg[i * imgWidth + j] /= 3;
-        if (rsltImg[i * imgWidth + j] < 0)
-          rsltImg[i * imgWidth + j] *= -1.0;
       }
+      // Copy directly
       else
       {
         for (int o = 0; o < 3; o++)
