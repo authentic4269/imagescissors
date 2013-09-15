@@ -189,11 +189,11 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
             int offsetX, offsetY;
             (*qPtr).nbrNodeOffset(offsetX, offsetY, i);
           //  printf("offsetX: %d   offsetY: %d\n", offsetX, offsetY);
-            int rY = (*qPtr).column + offsetX;
-            int rX = (*qPtr).row + offsetY;
+            int rX = (*qPtr).column + offsetX;
+            int rY = (*qPtr).row + offsetY;
             //printf("rX: %d   rY: %d   x: %d   y: %d\n", rX, rY, qPtr->column, qPtr-> row);
             if (rX < width && rX >= 0 && rY < height && rY >= 0) {
-                if (!selection || selection[height * rX + rY]) {
+                if (!selection || selection[width * rY + rX]) {
                     Node *rPtr = &(nodes[height * rX + rY]);
                  //   printf("r column: %d   rX: %d   r row: %d   rY: %d\n", rPtr->column, rX, rPtr->row, rY);
                    // cout << "\nrPtr index in nodes: "; cout << (width * rY + rX); cout << ", rY: "; cout << rY; cout << ", rX: "; cout << rX;
