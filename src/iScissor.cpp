@@ -96,36 +96,49 @@ static int offsetToLinkIndex(int dx, int dy)
 
 void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const unsigned char* selection, int numExpanded)
 {
+printf("TODO: %s:%d\n", __FILE__, __LINE__);
+    int currentExpanded = 0;
     CTypedPtrHeap<Node> pq;
     for (int i = 0; i < width * height; i++) {
         nodes[i].state = INITIAL;
+        nodes[i].totalCost = 0;
+        nodes[i].prevNode = NULL;
     }
-    Node *seedPtr = &(nodes[0]);
+    Node *seedPtr = &(nodes[width * seedY + seedX]);
     (*seedPtr).totalCost = 0.0;
     pq.Insert(seedPtr);
     while (!pq.IsEmpty()) {
         Node *qPtr = pq.ExtractMin();
         (*qPtr).state = EXPANDED;
+        currentExpanded++;
+        if (currentExpanded > numExpanded) {
+            break;
+        }
         for (int i = 0; i < 8; i++) {
             int offsetX, offsetY;
             (*qPtr).nbrNodeOffset(offsetX, offsetY, i);
             int rX = (*qPtr).column + offsetX;
             int rY = (*qPtr).row + offsetY;
-            Node *rPtr = &(nodes[width * rY + rX]);
-            if (! ((*rPtr).state == EXPANDED)) {
-                if ((*rPtr).state == INITIAL) {
-                    (*rPtr).totalCost = (*qPtr).totalCost + (*qPtr).linkCost[i];
-                    (*rPtr).state = ACTIVE;
-                    pq.Insert(rPtr);
-                }
-                else {
-                    int sumCost = (*qPtr).totalCost + (*qPtr).linkCost[i];
-                    if (sumCost < (*rPtr).totalCost) {
-                        (*rPtr).totalCost = sumCost;
+            if (rX < width && rX >= 0 && rY < height && rY >= 0) {
+                if (!selection || selection[width * rY + rX]) {
+                    Node *rPtr = &(nodes[width * rY + rX]);
+                    if (! ((*rPtr).state == EXPANDED)) {
+                        if ((*rPtr).state == INITIAL) {
+                            (*rPtr).totalCost = (*qPtr).totalCost + (*qPtr).linkCost[i];
+                            (*rPtr).state = ACTIVE;
+                            (*rPtr).prevNode = qPtr;
+                            pq.Insert(rPtr);
+                        }
+                        else {
+                            int sumCost = (*qPtr).totalCost + (*qPtr).linkCost[i];
+                            if (sumCost < (*rPtr).totalCost) {
+                                (*rPtr).totalCost = sumCost;
+                                (*rPtr).prevNode = qPtr;
+                            }
+                        }
                     }
                 }
             }
-
         }
     }
 
@@ -148,6 +161,16 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
 
 void MinimumPath(CTypedPtrDblList <Node>* path, int freePtX, int freePtY, Node* nodes, int width, int height)
 {
+printf("TODO: %s:%d\n", __FILE__, __LINE__);
+    Node *n = &(nodes[freePtY * width + freePtX]);
+    while (n != NULL) {
+        CTypedPtrDblElement<Node>* elem;
+        Node *data;
+        elem = (*path).AddHead(n);
+        data = (*elem).Data();
+        n = (*data).prevNode;
+    }
+
 	// Extra credit
 }
 /************************ END OF TODO 5 ***************************/
