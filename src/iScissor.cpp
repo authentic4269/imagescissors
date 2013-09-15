@@ -106,13 +106,16 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
     Node *seedPtr = &(nodes[width * seedY + seedX]);
     (*seedPtr).totalCost = 0.0;
     pq.Insert(seedPtr);
+    //printf("The x value of seed: %d The y value of seed: %d", (*seedPtr).column, (*seedPtr).row );
     while (!pq.IsEmpty()) {
         Node *qPtr = pq.ExtractMin();
         (*qPtr).state = EXPANDED;
+        printf("Expanded node at position (%d, %d) \n", (*qPtr).column, (*qPtr).row);
+   //     printf("The x value of added node: %d The y value of added node: %d", (*qPtr).column, (*qPtr).row );
         currentExpanded++;
-        if (currentExpanded > numExpanded) {
-            break;
-        }
+//        if (currentExpanded > numExpanded) {
+//            break;
+//        }
         for (int i = 0; i < 8; i++) {
             int offsetX, offsetY;
             (*qPtr).nbrNodeOffset(offsetX, offsetY, i);
