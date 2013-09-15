@@ -58,8 +58,8 @@ void InitNodeBuf(Node* nodes, const unsigned char* img, int imgWidth, int imgHei
   {
     for (j = 0; j < imgHeight; j++)
     {
-      (*nodes).row = i;
-      (*nodes).column = j;
+      (*nodes).row = j;
+      (*nodes).column = i;
       cout << "\nRow: "; cout << j; cout << ", Column: "; cout << i; cout << ", Index: "; cout << (i * imgHeight + j);
       for (link = 0; link < 8; link++)
       {
