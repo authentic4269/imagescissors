@@ -54,6 +54,8 @@ void image_filter(double* rsltImg, const unsigned char* origImg, const unsigned 
           rsltImg[(i * imgWidth + j)] += res[o];
         }
         rsltImg[i * imgWidth + j] /= 3;
+        if (rsltImg[i * imgWidth + j] < 0)
+          rsltImg[i * imgWidth + j] *= -1.0;
       }
       else
       {
@@ -107,7 +109,7 @@ void pixel_filter(double rsltPixel[3], int x, int y, const unsigned char* origIm
     {
       for(int z = 0; z < 3; z++)
       {
-        int t = ((x + xoff - 1) * imgWidth + (y + yoff - 1));
+        int t = 3 * ((x + xoff - 1) * imgWidth + (y + yoff - 1));
         if (t >= 0 && t < (imgWidth * imgHeight * 3 - 2))
         {
           rsltPixel[z] += kernel[(knlHeight*xoff) + yoff] * origImg[t + z];
