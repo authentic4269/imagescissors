@@ -192,7 +192,7 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
             //printf("rX: %d   rY: %d   x: %d   y: %d\n", rX, rY, qPtr->column, qPtr-> row);
             if (rX < width && rX >= 0 && rY < height && rY >= 0) {
                 if (!selection || selection[width * rY + rX]) {
-                    Node *rPtr = &(nodes[height * rY + rX]);
+                    Node *rPtr = &(nodes[width * rY + rX]);
                     printf("r column: %d   rX: %d   r row: %d   rY: %d\n", rPtr->column, rX, rPtr->row, rY);
                     if (! ((*rPtr).state == EXPANDED)) {
                         if ((*rPtr).state == INITIAL) {
