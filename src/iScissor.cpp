@@ -69,6 +69,42 @@ void InitNodeBuf(Node* nodes, const unsigned char* img, int imgWidth, int imgHei
   }
 }
 
+//void InitNodeBuf(Node *nodes, const unsigned char *img,
+//                 int imgWidth, int imgHeight) {
+//    double *rsltImg;
+//    double maxLink = 0;
+//    
+//    for (int link = 0; link < 8; link++) {
+//        rsltImg = new double[imgWidth * imgHeight * 3];
+//        image_filter(rsltImg, img, NULL, imgWidth, imgHeight,
+//                     kernels[link], 3, 3, 1, 0);
+//        for (int col = 0; col < imgWidth; col++) {
+//            for (int row = 0; row < imgHeight; row++) {
+//                Node* n = &nodes[row*imgWidth + col];
+//                n->row = row;
+//                n->column = col;
+//                double sum = 0;
+//                for (int c = 0; c < 3; c++) {
+//                    double curr = rsltImg[3*(row*imgWidth + col) + c];
+//                    if (curr > maxLink) {
+//                        maxLink = curr;
+//                    }
+//                    sum += curr*curr;
+//                }
+//                n->linkCost[link] = sqrt(sum/3);
+//            }
+//        }
+//        for (int i = 0; i < imgWidth*imgHeight; i++) {
+//            nodes[i].linkCost[link] = maxLink - nodes[i].linkCost[link];
+//            // Odd numbered links are diagonal.
+//            if (link % 2) {
+//                nodes[i].linkCost[link] *= SQRT2;
+//            }
+//        }
+//    }
+//    delete [] rsltImg;
+//}
+
 
 /************************ END OF TODO 1 ***************************/
 
@@ -95,6 +131,60 @@ static int offsetToLinkIndex(int dx, int dy)
  *		cost path from the seed to that node.
  */
 
+//void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const unsigned char* selection, int numExpanded)
+//{
+//    int currentExpanded = 0;
+//    CTypedPtrHeap<Node> pq;
+//    for (int i = 0; i < width * height; i++) {
+//        nodes[i].state = INITIAL;
+//        nodes[i].totalCost = 0;
+//        nodes[i].prevNode = NULL;
+//    }
+//    Node *seedPtr = &(nodes[width * seedY + seedX]);
+//    (*seedPtr).totalCost = 0.0;
+//    pq.Insert(seedPtr);
+//    //printf("The x value of seed: %d The y value of seed: %d", (*seedPtr).column, (*seedPtr).row );
+//    while (!pq.IsEmpty()) {
+//        Node *qPtr = pq.ExtractMin();
+//        (*qPtr).state = EXPANDED;
+//        //printf("Expanded node at position (%d, %d) \n", (*qPtr).column, (*qPtr).row);
+//   //     printf("The x value of added node: %d The y value of added node: %d", (*qPtr).column, (*qPtr).row );
+//        currentExpanded++;
+//        if (currentExpanded > numExpanded) {
+//            break;
+//        }
+//        for (int i = 0; i < 8; i++) {
+//            int offsetX, offsetY;
+//            (*qPtr).nbrNodeOffset(offsetX, offsetY, i);
+//            int rX = (*qPtr).column + offsetX;
+//            int rY = (*qPtr).row + offsetY;
+//            if (rX < width && rX >= 0 && rY < height && rY >= 0) {
+//                if (!selection || selection[width * rY + rX]) {
+//                    Node *rPtr = &(nodes[width * rY + rX]);
+//                    if (! ((*rPtr).state == EXPANDED)) {
+//                        if ((*rPtr).state == INITIAL) {
+//                            (*rPtr).totalCost = (*qPtr).totalCost + (*qPtr).linkCost[i];
+//                            (*rPtr).state = ACTIVE;
+//                            (*rPtr).prevNode = qPtr;
+//                            printf("Node: (%d,%d)   prevNode: (%d,%d)\n", rPtr->column, rPtr->row, qPtr->column, qPtr->row);
+//                            pq.Insert(rPtr);
+//                        }
+//                        else if ((*rPtr).state == ACTIVE) {
+//                            double sumCost = (*qPtr).totalCost + (*qPtr).linkCost[i];
+//                            if (sumCost < (*rPtr).totalCost) {
+//                                (*rPtr).totalCost = sumCost;
+//                                (*rPtr).prevNode = qPtr;
+//                                printf("Node: (%d,%d)   prevNode: (%d,%d)\n", rPtr->column, rPtr->row, qPtr->column, qPtr->row);
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+//
+//}
+
 void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const unsigned char* selection, int numExpanded)
 {
     int currentExpanded = 0;
@@ -112,7 +202,7 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
         Node *qPtr = pq.ExtractMin();
         (*qPtr).state = EXPANDED;
         //printf("Expanded node at position (%d, %d) \n", (*qPtr).column, (*qPtr).row);
-   //     printf("The x value of added node: %d The y value of added node: %d", (*qPtr).column, (*qPtr).row );
+        //     printf("The x value of added node: %d The y value of added node: %d", (*qPtr).column, (*qPtr).row );
         currentExpanded++;
         if (currentExpanded > numExpanded) {
             break;
@@ -120,16 +210,20 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
         for (int i = 0; i < 8; i++) {
             int offsetX, offsetY;
             (*qPtr).nbrNodeOffset(offsetX, offsetY, i);
+          //  printf("offsetX: %d   offsetY: %d\n", offsetX, offsetY);
             int rX = (*qPtr).column + offsetX;
             int rY = (*qPtr).row + offsetY;
+            //printf("rX: %d   rY: %d   x: %d   y: %d\n", rX, rY, qPtr->column, qPtr-> row);
             if (rX < width && rX >= 0 && rY < height && rY >= 0) {
                 if (!selection || selection[width * rY + rX]) {
-                    Node *rPtr = &(nodes[width * rY + rX]);
+                    Node *rPtr = &(nodes[height * rY + rX]);
+                    printf("r column: %d   rX: %d   r row: %d   rY: %d\n", rPtr->column, rX, rPtr->row, rY);
                     if (! ((*rPtr).state == EXPANDED)) {
                         if ((*rPtr).state == INITIAL) {
                             (*rPtr).totalCost = (*qPtr).totalCost + (*qPtr).linkCost[i];
                             (*rPtr).state = ACTIVE;
                             (*rPtr).prevNode = qPtr;
+                //            printf("Node: (%d,%d)   prevNode: (%d,%d)\n", rPtr->column, rPtr->row, qPtr->column, qPtr->row);
                             pq.Insert(rPtr);
                         }
                         else if ((*rPtr).state == ACTIVE) {
@@ -137,6 +231,7 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
                             if (sumCost < (*rPtr).totalCost) {
                                 (*rPtr).totalCost = sumCost;
                                 (*rPtr).prevNode = qPtr;
+                         //       printf("Node: (%d,%d)   prevNode: (%d,%d)\n", rPtr->column, rPtr->row, qPtr->column, qPtr->row);
                             }
                         }
                     }
@@ -144,7 +239,7 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
             }
         }
     }
-
+    
 }
 
 
