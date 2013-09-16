@@ -53,7 +53,7 @@ void InitNodeBuf(Node* nodes, const unsigned char* img, int imgWidth, int imgHei
     double *ptr = &gradients[i * imgWidth * imgHeight];
     const unsigned char *sel = selected;
     double ke[9] = {0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0};
-    image_filter(ptr, img, sel, imgWidth, imgHeight, kernels[i], KERNEL_WIDTH, KERNEL_HEIGHT, 1.0, 0.0);
+    image_filter(ptr, img, sel, imgWidth, imgHeight, kernels[i], KERNEL_WIDTH, KERNEL_HEIGHT, 1.0, 1.0);
   }
   for (int i = 0; i < imgWidth; i++)
   {
@@ -270,6 +270,29 @@ void MinimumPath(CTypedPtrDblList <Node>* path, int freePtX, int freePtY, Node* 
 
 void SeedSnap(int& x, int& y, unsigned char* img, int width, int height)
 {
+  double *gradients = new double[8 * width * height];
+  double max = 0.0;
+
+  for (int i = 0; i < 8; i++)
+   {
+     double *ptr = &gradients[i * width * height];
+     image_filter(ptr, img, NULL, width, height, kernels[i], KERNEL_WIDTH, KERNEL_HEIGHT, 1.0, 0.0);
+   }
+  for (int i = 0; i < width; i++)
+  {
+    for (int j = 0; j < height; j++)
+    {
+      for (int g = 0; g < 8; g++)
+      {
+        if (gradients[width * height * g + i * height + j] > max)
+        {
+          max = gradients[width * height * g + i * height + j];
+          x = i - (width / 2);
+          y = j - (height / 2);
+        }
+      }
+    }
+  }
 	//Extra credit
 }
 
