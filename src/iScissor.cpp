@@ -165,6 +165,7 @@ static int offsetToLinkIndex(int dx, int dy)
 
 void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const unsigned char* selection, int numExpanded)
 {
+   // printf("seedX: %d  seedY: %d  width: %d   height: %d", seedX, seedY, width, height);
     int currentExpanded = 0;
     CTypedPtrHeap<Node> pq;
     for (int i = 0; i < width * height; i++) {
@@ -172,7 +173,7 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
         nodes[i].totalCost = 0;
         nodes[i].prevNode = NULL;
     }
-    Node *seedPtr = &(nodes[width * seedY + seedX]);
+    Node *seedPtr = &(nodes[height * seedX + seedY]);
     (*seedPtr).totalCost = 0.0;
     pq.Insert(seedPtr);
     //printf("The x value of seed: %d The y value of seed: %d", (*seedPtr).column, (*seedPtr).row );
@@ -191,7 +192,7 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
           //  printf("offsetX: %d   offsetY: %d\n", offsetX, offsetY);
             int rX = (*qPtr).column + offsetX;
             int rY = (*qPtr).row + offsetY;
-            //printf("rX: %d   rY: %d   x: %d   y: %d\n", rX, rY, qPtr->column, qPtr-> row);
+           // printf("rX: %d   rY: %d   x: %d   y: %d\n", rX, rY, qPtr->column, qPtr-> row);
             if (rX < width && rX >= 0 && rY < height && rY >= 0) {
                 if (!selection || selection[height * rX + rY]) {
                     Node *rPtr = &(nodes[height * rX + rY]);
@@ -203,7 +204,7 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
                             (*rPtr).totalCost = (*qPtr).totalCost + (*qPtr).linkCost[i];
                             (*rPtr).state = ACTIVE;
                             (*rPtr).prevNode = qPtr;
-                //            printf("Node: (%d,%d)   prevNode: (%d,%d)\n", rPtr->column, rPtr->row, qPtr->column, qPtr->row);
+                    //        printf("Node: (%d,%d)   prevNode: (%d,%d)\n", rPtr->column, rPtr->row, qPtr->column, qPtr->row);
                             pq.Insert(rPtr);
                         }
                         else if ((*rPtr).state == ACTIVE) {
@@ -241,7 +242,7 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
 
 void MinimumPath(CTypedPtrDblList <Node>* path, int freePtX, int freePtY, Node* nodes, int width, int height)
 {
-    Node *n = &(nodes[freePtY * width + freePtX]);
+    Node *n = &(nodes[freePtX * height + freePtY]);
     while (n != NULL) {
         CTypedPtrDblElement<Node>* elem;
         Node *data;
