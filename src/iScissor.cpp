@@ -243,15 +243,16 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
 void MinimumPath(CTypedPtrDblList <Node>* path, int freePtX, int freePtY, Node* nodes, int width, int height)
 {
     Node *n = &(nodes[freePtX * height + freePtY]);
+    printf("end location (%d,%d)", freePtX, freePtY);
     while (n != NULL) {
         CTypedPtrDblElement<Node>* elem;
         Node *data;
         elem = (*path).AddHead(n);
         data = (*elem).Data();
         n = (*data).prevNode;
-        if (n != NULL) {
-            printf("adding node at position (%d,%d) \n", n->column, n->row);
-        }
+//        if (n != NULL) {
+//            printf("adding node at position (%d,%d) \n", n->column, n->row);
+//        }
     }
 
 	// Extra credit
@@ -271,6 +272,7 @@ void MinimumPath(CTypedPtrDblList <Node>* path, int freePtX, int freePtY, Node* 
 void SeedSnap(int& x, int& y, unsigned char* img, int width, int height)
 {
 	//Extra credit
+    
 }
 
 //generate a cost graph from original image and node buffer with all the link costs;
